@@ -1,18 +1,27 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
-	"github.com/Alfabetss/simple-rest-api/config"
+	"github.com/Alfabetss/simple-rest-api/controller"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 func main() {
-	db, err := config.Connect()
-	defer db.Close()
+	e := echo.New()
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
-	if err != nil {
-		fmt.Printf("failed to connect : %s", err.Error())
-		return
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+	}))
+
+	talentGroup := e.Group("/talent")
+	talentGroup.POST("/create", controller.CreateTalent)
+
+	if err := e.Start(":1122"); err != nil {
+		log.Fatal()
 	}
-	fmt.Println("connect success")
 }
