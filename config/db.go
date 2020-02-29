@@ -8,17 +8,16 @@ import (
 )
 
 // Connect to database
-func Connect() error {
-	db, err := sql.Open("mysql", "root:12345@tcp(127.0.0.1:3306)/experiment")
+func Connect() (*sql.DB, error) {
+	db, err := sql.Open("mysql", "root:12345@tcp(127.0.0.1:3306)/resource")
 	if err != nil {
-		return err
+		return db, err
 	}
 
-	defer db.Close()
 	err = db.Ping()
 	if err != nil {
-		return err
+		return db, err
 	}
 
-	return nil
+	return db, nil
 }

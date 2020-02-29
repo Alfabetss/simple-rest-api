@@ -7,7 +7,9 @@ import (
 )
 
 func main() {
-	err := config.Connect()
+	db, err := config.Connect()
+	defer db.Close()
+
 	if err != nil {
 		fmt.Printf("failed to connect : %s", err.Error())
 		return
