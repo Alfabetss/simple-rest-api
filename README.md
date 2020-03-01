@@ -15,7 +15,7 @@ some things that must have or be installed to run this program :
 * [postman](https://www.postman.com/downloads/) - The API Client
 
 #### Create Table
-To create a table you can copy the script in the /script/*.sql folder and run in your database
+To create a table you can copy the script in the `/script/*.sql` folder and run in your database
 
 #### Configuration 
 
