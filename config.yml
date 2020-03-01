@@ -1,0 +1,10 @@
+server: 
+  Port: 
+
+database: 
+  DBProtocol: 
+  DBHost: 
+  DBPort: 
+  DBUser: 
+  DBPass: 
+  DBName: 
