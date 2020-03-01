@@ -9,12 +9,10 @@ in this repository we will implement echo framework to create APIs that implemen
 
 some things that must have or be installed to run this program : 
 
-```
-1. golang : https://golang.org/doc/install
-2. mysql : https://www.mysql.com/downloads/
-3. vscode for IDE : https://code.visualstudio.com/download
-4. postman for API client : https://www.postman.com/downloads/
-```
+* [golang](https://golang.org/doc/install) - The Programming Language
+* [mysql](https://www.mysql.com/downloads/) - The Database
+* [vscode](https://code.visualstudio.com/download) - The IDE
+* [postman](https://www.postman.com/downloads/) - The API Client
 
 create database mysql on your local machine : 
 ```
