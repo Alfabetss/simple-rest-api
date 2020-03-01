@@ -13,6 +13,7 @@ import (
 type ExperienceRepository interface {
 	Create(ctx context.Context, exp entity.Experience) (int64, error)
 	FindExperience(ctx context.Context, talentID int64) ([]entity.Experience, error)
+	Delete(ctx context.Context, talentID int64) error
 }
 
 // ExperienceRepositoryImpl implementation interface
@@ -80,4 +81,20 @@ func (e ExperienceRepositoryImpl) Create(ctx context.Context, exp entity.Experie
 
 	log.Printf("success insert experience for talent id : %d, company name : %s", id, exp.Company)
 	return id, nil
+}
+
+// Delete function to delete experience row by talent id
+func (e ExperienceRepositoryImpl) Delete(ctx context.Context, talentID int64) error {
+	query, args, err := squirrel.Delete("experience").
+		Where(squirrel.Eq{"talent_id": talentID}).ToSql()
+	if err != nil {
+		return err
+	}
+
+	_, err = e.db.Exec(query, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

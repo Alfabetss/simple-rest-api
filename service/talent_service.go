@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"log"
 
 	"github.com/Alfabetss/simple-rest-api/config"
 	"github.com/Alfabetss/simple-rest-api/entity"
@@ -29,6 +30,7 @@ type FindTalentResponse struct {
 type TalentService interface {
 	CreateTalent(ctx context.Context, req *CreateTalentRequest) error
 	FindTalent(ctx context.Context, ID int64) (FindTalentResponse, error)
+	Delete(ctx context.Context, ID int64) (err error)
 }
 
 // TalentServiceImpl implementation
@@ -110,9 +112,46 @@ func (t TalentServiceImpl) FindTalent(ctx context.Context, ID int64) (response F
 		return
 	}
 
-	tx.Commit()
+	err = tx.Commit()
 	return FindTalentResponse{
 		Talent:     talent,
 		Experience: experience,
-	}, nil
+	}, err
+}
+
+// Delete function to delete row in experience & talent table
+func (t TalentServiceImpl) Delete(ctx context.Context, ID int64) (err error) {
+	db, err := config.Connect()
+	if err != nil {
+		return
+	}
+
+	// begin transaction
+	tx, err := db.Begin()
+	if err != nil {
+		return
+	}
+	defer func() {
+		db.Close()
+		tx.Rollback()
+	}()
+
+	expRepository := repository.NewExperienceRepositoryImpl(tx)
+	err = expRepository.Delete(ctx, ID)
+	if err != nil {
+		return err
+	}
+
+	talentRepo := repository.NewTalentRepositoryImpl(tx)
+	err = talentRepo.Delete(ctx, ID)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("failed to commit error : %s", err.Error())
+	}
+
+	return err
 }

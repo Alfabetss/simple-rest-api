@@ -13,6 +13,7 @@ import (
 type TalentRepository interface {
 	Create(ctx context.Context, talent entity.Talent) (int64, error)
 	FindTalent(ctx context.Context, ID int64) (entity.Talent, error)
+	Delete(ctx context.Context, ID int64) error
 }
 
 // TalentRepositoryImpl implementation interface
@@ -67,4 +68,21 @@ func (t TalentRepositoryImpl) FindTalent(ctx context.Context, ID int64) (entity.
 	}
 
 	return talent, nil
+}
+
+// Delete function for delete talent row by id
+func (t TalentRepositoryImpl) Delete(ctx context.Context, ID int64) error {
+	query, args, err := squirrel.Delete("talent").
+		Where(squirrel.Eq{"id": ID}).ToSql()
+	if err != nil {
+		return err
+	}
+
+	_, err = t.db.Exec(query, args...)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("success delete talent with id : %d", ID)
+	return nil
 }

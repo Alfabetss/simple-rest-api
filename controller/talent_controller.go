@@ -40,3 +40,20 @@ func FindTalent(e echo.Context) error {
 
 	return e.JSON(http.StatusOK, resp)
 }
+
+// Delete handler for delete talent
+func Delete(e echo.Context) error {
+	param := e.Param("talentID")
+	talentID, err := strconv.ParseInt(param, 10, 64)
+	if err != nil || talentID == 0 {
+		return e.JSON(http.StatusBadRequest, "bad request")
+	}
+
+	tService := service.NewTalentServiceImpl()
+	err = tService.Delete(e.Request().Context(), talentID)
+	if err != nil {
+		return e.JSON(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	return e.JSON(http.StatusOK, "success delete talent")
+}
