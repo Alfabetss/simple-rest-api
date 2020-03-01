@@ -20,6 +20,7 @@ func main() {
 
 	talentGroup := e.Group("/talent")
 	talentGroup.POST("/create", controller.CreateTalent)
+	talentGroup.GET("/:talentID", controller.FindTalent)
 
 	if err := e.Start(":1122"); err != nil {
 		log.Fatal()

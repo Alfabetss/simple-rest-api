@@ -19,9 +19,16 @@ type ExperienceRequest struct {
 	CompanyName string `json:"companyName"`
 }
 
+// FindTalentResponse response for find talent
+type FindTalentResponse struct {
+	Talent     entity.Talent       `json:"talent"`
+	Experience []entity.Experience `json:"experience"`
+}
+
 // TalentService service to handle business logic for talent
 type TalentService interface {
 	CreateTalent(ctx context.Context, req *CreateTalentRequest) error
+	FindTalent(ctx context.Context, ID int64) (FindTalentResponse, error)
 }
 
 // TalentServiceImpl implementation
@@ -72,4 +79,40 @@ func (t TalentServiceImpl) CreateTalent(ctx context.Context, req *CreateTalentRe
 
 	err = tx.Commit()
 	return err
+}
+
+// FindTalent function for find talent data
+func (t TalentServiceImpl) FindTalent(ctx context.Context, ID int64) (response FindTalentResponse, err error) {
+	db, err := config.Connect()
+	if err != nil {
+		return
+	}
+
+	// begin transaction
+	tx, err := db.Begin()
+	if err != nil {
+		return
+	}
+	defer func() {
+		db.Close()
+		tx.Rollback()
+	}()
+
+	talentRepository := repository.NewTalentRepositoryImpl(tx)
+	talent, err := talentRepository.FindTalent(ctx, ID)
+	if err != nil {
+		return
+	}
+
+	experienceRepository := repository.NewExperienceRepositoryImpl(tx)
+	experience, err := experienceRepository.FindExperience(ctx, ID)
+	if err != nil {
+		return
+	}
+
+	tx.Commit()
+	return FindTalentResponse{
+		Talent:     talent,
+		Experience: experience,
+	}, nil
 }
