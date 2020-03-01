@@ -12,6 +12,7 @@ import (
 // TalentRepository that related with talent repository
 type TalentRepository interface {
 	Create(ctx context.Context, talent entity.Talent) (int64, error)
+	FindTalent(ctx context.Context, ID int64) (entity.Talent, error)
 }
 
 // TalentRepositoryImpl implementation interface
@@ -47,6 +48,23 @@ func (t TalentRepositoryImpl) Create(ctx context.Context, talent entity.Talent) 
 }
 
 // FindTalent function to find talent by talent id
-func (t TalentRepositoryImpl) FindTalent(ctx context.Context, ID int64) error {
-	return nil
+func (t TalentRepositoryImpl) FindTalent(ctx context.Context, ID int64) (entity.Talent, error) {
+	var talent entity.Talent
+	query, args, err := squirrel.Select("id", "name").
+		From("talent").
+		Where(squirrel.Eq{"id": ID}).ToSql()
+	if err != nil {
+		return talent, nil
+	}
+
+	row := t.db.QueryRow(query, args...)
+	err = row.Scan(
+		&talent.ID,
+		&talent.Name,
+	)
+	if err != nil {
+		return talent, err
+	}
+
+	return talent, nil
 }

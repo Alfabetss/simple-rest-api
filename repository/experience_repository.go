@@ -12,7 +12,7 @@ import (
 // ExperienceRepository interface that related with experience repository
 type ExperienceRepository interface {
 	Create(ctx context.Context, exp entity.Experience) (int64, error)
-	FindExperience(ctx context.Context, talentID int64) error
+	FindExperience(ctx context.Context, talentID int64) ([]entity.Experience, error)
 }
 
 // ExperienceRepositoryImpl implementation interface
@@ -28,8 +28,36 @@ func NewExperienceRepositoryImpl(db *sql.Tx) ExperienceRepository {
 }
 
 // FindExperience function to find experience by talent id
-func (e ExperienceRepositoryImpl) FindExperience(ctx context.Context, talentID int64) error {
-	return nil
+func (e ExperienceRepositoryImpl) FindExperience(ctx context.Context, talentID int64) ([]entity.Experience, error) {
+	var experiences []entity.Experience
+	query, args, err := squirrel.Select("id", "company", "talent_id").
+		From("experience").
+		Where(squirrel.Eq{"talent_id": talentID}).ToSql()
+
+	if err != nil {
+		return experiences, err
+	}
+
+	rows, err := e.db.Query(query, args...)
+	if err != nil {
+		return experiences, err
+	}
+
+	for rows.Next() {
+		var exp entity.Experience
+		err := rows.Scan(
+			&exp.ID,
+			&exp.Company,
+			&exp.TalentID,
+		)
+		if err != nil {
+			return experiences, err
+		}
+
+		experiences = append(experiences, exp)
+	}
+
+	return experiences, nil
 }
 
 // Create function to insert to experience table
