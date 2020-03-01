@@ -1,10 +1,10 @@
 server: 
-  Port: ":8888"
+  Port: 
 
 database: 
-  DBProtocol: "tcp"
-  DBHost: "127.0.0.1"
-  DBPort: "3306"
-  DBUser: root
-  DBPass: "12345"
-  DBName: "resource"
+  DBProtocol: 
+  DBHost: 
+  DBPort: 
+  DBUser: 
+  DBPass: 
+  DBName: 
