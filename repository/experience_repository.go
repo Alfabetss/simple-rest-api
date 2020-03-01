@@ -12,8 +12,10 @@ import (
 // ExperienceRepository interface that related with experience repository
 type ExperienceRepository interface {
 	Create(ctx context.Context, exp entity.Experience) (int64, error)
-	FindExperience(ctx context.Context, talentID int64) ([]entity.Experience, error)
+	FindTalentExperiences(ctx context.Context, talentID int64) ([]entity.Experience, error)
 	Delete(ctx context.Context, talentID int64) error
+	Update(ctx context.Context, exp entity.Experience) error
+	FindExperience(ctx context.Context, ID int64) (*entity.Experience, error)
 }
 
 // ExperienceRepositoryImpl implementation interface
@@ -28,8 +30,8 @@ func NewExperienceRepositoryImpl(db *sql.Tx) ExperienceRepository {
 	}
 }
 
-// FindExperience function to find experience by talent id
-func (e ExperienceRepositoryImpl) FindExperience(ctx context.Context, talentID int64) ([]entity.Experience, error) {
+// FindTalentExperiences function to find experience by talent id
+func (e ExperienceRepositoryImpl) FindTalentExperiences(ctx context.Context, talentID int64) ([]entity.Experience, error) {
 	var experiences []entity.Experience
 	query, args, err := squirrel.Select("id", "company", "talent_id").
 		From("experience").
@@ -97,4 +99,44 @@ func (e ExperienceRepositoryImpl) Delete(ctx context.Context, talentID int64) er
 	}
 
 	return nil
+}
+
+// Update function to update experience by id
+func (e ExperienceRepositoryImpl) Update(ctx context.Context, exp entity.Experience) error {
+	query, args, err := squirrel.Update("experience").
+		Set("company", exp.Company).
+		Where(squirrel.Eq{"id": exp.ID}).ToSql()
+	if err != nil {
+		return err
+	}
+
+	_, err = e.db.Exec(query, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// FindExperience function to find experience by id
+func (e ExperienceRepositoryImpl) FindExperience(ctx context.Context, ID int64) (*entity.Experience, error) {
+	var experience entity.Experience
+	query, args, err := squirrel.Select("id", "company", "talent_id").
+		From("experience").
+		Where(squirrel.Eq{"id": ID}).ToSql()
+	if err != nil {
+		return &experience, err
+	}
+
+	row := e.db.QueryRow(query, args...)
+	err = row.Scan(
+		&experience.ID,
+		&experience.Company,
+		&experience.TalentID,
+	)
+	if err != nil {
+		return &experience, err
+	}
+
+	return &experience, nil
 }

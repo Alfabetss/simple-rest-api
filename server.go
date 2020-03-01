@@ -19,9 +19,11 @@ func main() {
 	}))
 
 	talentGroup := e.Group("/talent")
-	talentGroup.POST("/create", controller.CreateTalent)
+	talentGroup.POST("", controller.CreateTalent)
 	talentGroup.GET("/:talentID", controller.FindTalent)
 	talentGroup.DELETE("/:talentID", controller.Delete)
+	talentGroup.PUT("", controller.UpdateTalent)
+	talentGroup.PUT("/experience", controller.UpdateTalentExperience)
 
 	if err := e.Start(":1122"); err != nil {
 		log.Fatal()
