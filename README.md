@@ -14,26 +14,20 @@ some things that must have or be installed to run this program :
 * [vscode](https://code.visualstudio.com/download) - The IDE
 * [postman](https://www.postman.com/downloads/) - The API Client
 
+#### Create Table
+To create a table you can copy the script in the /script/*.sql folder and run in your database
 
-create table talent & experience on your database
-```
-CREATE TABLE `talent` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
-```
+#### Configuration 
 
-```
-CREATE TABLE `experience` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `company` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `talent_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `talent_id` (`talent_id`),
-  CONSTRAINT `experience_ibfk_1` FOREIGN KEY (`talent_id`) REFERENCES `talent` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
-```
+| Name | Type | Default | Required | Example Value |
+| --- | --- | --- | --- | --- |
+| Port | String | :8888 | Yes | :8080
+| DBName | String | - | Yes | example_database |
+| DBProtocol | String | - | Yes | tcp |
+| DBHost | String | - | Yes | localhost |
+| DBPort | String | - | Yes | 3360 |
+| DBUser | String | - | Yes | root |
+| DBPass | String | - | Yes | administrator |
 
 ### Running
 clone repository :
