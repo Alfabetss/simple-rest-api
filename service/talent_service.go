@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/Alfabetss/simple-rest-api/config"
 	"github.com/Alfabetss/simple-rest-api/entity"
 	"github.com/Alfabetss/simple-rest-api/repository"
 )
@@ -51,27 +50,24 @@ type TalentService interface {
 
 // TalentServiceImpl implementation
 type TalentServiceImpl struct {
+	db *sql.DB
 }
 
 // NewTalentServiceImpl constructor
-func NewTalentServiceImpl() TalentService {
-	return TalentServiceImpl{}
+func NewTalentServiceImpl(db *sql.DB) TalentService {
+	return TalentServiceImpl{
+		db: db,
+	}
 }
 
 // CreateTalent function for create talent data
 func (t TalentServiceImpl) CreateTalent(ctx context.Context, req *CreateTalentRequest) error {
-	db, err := config.Connect()
-	if err != nil {
-		return err
-	}
-
 	// begin transaction
-	tx, err := db.Begin()
+	tx, err := t.db.Begin()
 	if err != nil {
 		return err
 	}
 	defer func() {
-		db.Close()
 		tx.Rollback()
 	}()
 
@@ -101,18 +97,12 @@ func (t TalentServiceImpl) CreateTalent(ctx context.Context, req *CreateTalentRe
 
 // FindTalent function for find talent data
 func (t TalentServiceImpl) FindTalent(ctx context.Context, ID int64) (response FindTalentResponse, err error) {
-	db, err := config.Connect()
-	if err != nil {
-		return
-	}
-
 	// begin transaction
-	tx, err := db.Begin()
+	tx, err := t.db.Begin()
 	if err != nil {
 		return
 	}
 	defer func() {
-		db.Close()
 		tx.Rollback()
 	}()
 
@@ -141,18 +131,12 @@ func (t TalentServiceImpl) FindTalent(ctx context.Context, ID int64) (response F
 
 // Delete function to delete row in experience & talent table
 func (t TalentServiceImpl) Delete(ctx context.Context, ID int64) (err error) {
-	db, err := config.Connect()
-	if err != nil {
-		return
-	}
-
 	// begin transaction
-	tx, err := db.Begin()
+	tx, err := t.db.Begin()
 	if err != nil {
 		return
 	}
 	defer func() {
-		db.Close()
 		tx.Rollback()
 	}()
 
@@ -178,18 +162,12 @@ func (t TalentServiceImpl) Delete(ctx context.Context, ID int64) (err error) {
 
 // UpdateTalent function for update talent
 func (t TalentServiceImpl) UpdateTalent(ctx context.Context, req UpdateTalentRequest) (err error) {
-	db, err := config.Connect()
-	if err != nil {
-		return
-	}
-
 	// begin transaction
-	tx, err := db.Begin()
+	tx, err := t.db.Begin()
 	if err != nil {
 		return
 	}
 	defer func() {
-		db.Close()
 		tx.Rollback()
 	}()
 
@@ -213,18 +191,12 @@ func (t TalentServiceImpl) UpdateTalent(ctx context.Context, req UpdateTalentReq
 
 // UpdateExperience function for update experience
 func (t TalentServiceImpl) UpdateExperience(ctx context.Context, req UpdateExperienceRequest) (err error) {
-	db, err := config.Connect()
-	if err != nil {
-		return
-	}
-
 	// begin transaction
-	tx, err := db.Begin()
+	tx, err := t.db.Begin()
 	if err != nil {
 		return
 	}
 	defer func() {
-		db.Close()
 		tx.Rollback()
 	}()
 
