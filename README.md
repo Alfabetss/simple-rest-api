@@ -14,10 +14,6 @@ some things that must have or be installed to run this program :
 * [vscode](https://code.visualstudio.com/download) - The IDE
 * [postman](https://www.postman.com/downloads/) - The API Client
 
-create database mysql on your local machine : 
-```
-CREATE DATABASE resource;
-```
 
 create table talent & experience on your database
 ```
